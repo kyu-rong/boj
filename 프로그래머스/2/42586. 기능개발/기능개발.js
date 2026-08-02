@@ -1,23 +1,31 @@
 function solution(progresses, speeds) {
+    //progresses, speeds배열의 길이가 100개 이하니 널널한 편
     var answer = [];
-    const remainArray = progresses.map((value, index)=> {
-        return Math.ceil((100 - value)/speeds[index]);
-    });
-    let counter = 1;
-    let maxNum = remainArray[0];
-    console.log(remainArray);
     
-    remainArray.forEach((value, index, array)=> {
-        if(index == array.length-1) {
-            answer.push(counter)
-        }else if(maxNum < array[index+1]) {
-            maxNum = array[index+1];
-            console.log(`maxNum: ${maxNum}, counter: ${counter}`)
+    const remainders = [];
+    const deployDays = [];
+    progresses.forEach((value, index)=> {
+        const remain = 100 - value;
+        const deployDay = Math.ceil(remain / speeds[index]);
+        remainders.push(100 - value);
+        deployDays.push(deployDay);
+    })
+    console.log(remainders,deployDays);
+    let max = deployDays[0];
+    let counter = 0;
+    for(let i=0; i<deployDays.length; i++) {
+        if(max < deployDays[i]) {
+            // console.log(`deployDays[i](${deployDays[i]}) is bigger than max(${max}) / counter : ${counter}`);
             answer.push(counter);
+            max = deployDays[i];
             counter = 1;
         }else {
-            counter++;
+            counter ++;
         }
-    })
+    }
+    if(counter !== 0) {
+        answer.push(counter);
+    }
+    
     return answer;
 }
