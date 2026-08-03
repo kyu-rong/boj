@@ -1,48 +1,35 @@
 function solution(n, costs) {
     var answer = 0;
-    const map = {};
-    costs.forEach(([from,to,cost])=> {
-        if(map[from]===undefined) {
-            map[from] = [{to : to ,cost : cost}];    
+    const visited = new Array(100).fill(false);
+    const bridge = {};
+    costs.forEach(([from,to,distance])=> {
+        if(bridge[from] === undefined) {
+            bridge[from] = [{to, distance}];
         }else {
-            map[from].push({to : to ,cost : cost});    
+            bridge[from].push({to, distance});
+            bridge[from].sort((a,b)=> a.distance - b.distance);
         }
-        
-        if(map[to] === undefined) {
-            map[to] = [{to : from ,cost : cost}];    
+        if(bridge[to] === undefined) {
+            bridge[to] = [{to :from,distance}]
         }else {
-            map[to].push({to : from ,cost : cost});    
+            bridge[to].push({to :from,distance});
+            bridge[to].sort((a,b)=> a.distance - b.distance);
         }
     })
-    // console.log(map);
-    const queue = [{to:0,cost:0}];;
-    const visited = Array(Object.keys(map).length).fill(false);    
-    while(queue.length >0) {
-        console.log(queue);
-        queue.sort((a,b)=>a.cost-b.cost);
-        const {to:from,cost:cost} = queue.shift();
-        if(!visited[from]) {
-            answer +=cost;
-            visited[from] = true;   
-            
-            const sortedToArr = map[from].sort((a,b)=>a.cost-b.cost);
-        
-            sortedToArr.forEach(({to:to, cost:toCost})=> {
-                if(!visited[to]){
-                    queue.push({to:to,cost:toCost});
-                }
-
-            })    
+    costs.sort((a,b)=> a[2] - b[2]);
+    const queue = bridge[costs[0][0]];
+    visited[costs[0][0]] = true;
+    while(queue.length>0) {
+        // console.log(queue);
+        const shifted = queue.shift();
+        if(!visited[shifted.to]) {
+            // console.log('----- ', shifted.to,'----')
+            answer += shifted.distance;
+            visited[shifted.to] = true;
+            queue.push(...bridge[shifted.to]);
+            queue.sort((a,b)=>a.distance-b.distance);
         }
-        
-
-        // console.log(visited);
     }
-
+    // console.log(bridge);
     return answer;
 }
-
-
-//최소의 비용으로 모든 섬이 서로 통행 가능하도록 만들 때 필요한 최소 비용을 return 하도록 solution을 완성
-//100 과 100C2 만큼 costs의 길이
-
