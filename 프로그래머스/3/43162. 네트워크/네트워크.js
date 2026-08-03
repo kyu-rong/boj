@@ -1,23 +1,38 @@
 function solution(n, computers) {
     var answer = 0;
-    const visited = Array(computers.length).fill(false);
-    console.log(visited);
-    
-    function dfs(i) {
-        const node = computers[i];
-        for(let j = 0 ; j<node.length; j++) {
-            if(j !== i && node[j] == 1 && visited[j] == false) {
-                visited[j] = true;
-                dfs(j);
-                console.log(i,j);
+    const graph = {};
+    const visited = Array(n).fill(false);
+    computers.forEach((arr,index)=> {
+        for(let i=0; i<arr.length; i++) {
+            if(arr[i] ==1) {
+                if(graph[index] === undefined) {
+                    graph[index] = [i];    
+                }else {
+                    graph[index].push(i);
+                }
             }
-        }
-    }
-    for(let i = 0 ; i<computers.length; i ++) {
-        if(visited[i] == false) {
+        }});
+    
+    // console.log(graph);
+    for(let i = 0 ; i<n; i++) {
+        if(!visited[i]) {
+            const queue = [i];
             answer++;
-            dfs(i);
+            while(queue.length >0) {
+                const shifted = queue.shift();
+                const toArr = graph[shifted];
+                for(let k=0; k<toArr.length; k++) {
+                    const to = toArr[k];
+                    if(!visited[to]) {
+                        visited[to] = true;
+                        queue.push(to);
+                    }
+                }
+            }
+
         }
     }
+    
+    
     return answer;
 }
