@@ -1,37 +1,30 @@
 function solution(scores) {
-    var answer = 1;
-    const wanho = scores[0];
-    const wanhoScore = wanho[0] + wanho[1];
-    
-    scores.sort((a,b)=> {
-        if(a[0] === b[0]) {
-            return a[1] - b[1]
-        }
-        return b[0] - a[0];
-    })
-    
-    console.log(scores);
-    
-    // 태도 점수로 일단 내림차순 정렬 -> 같으면 동료 평가 점수로 오름차순
-    let maxPeer = 0;
-
-    for(let i = 0; i<scores.length; i++) {
-        const score = scores[i];
-        const [attitude, peer] = score;
-        //이전 태도점수보다도 작고, 동료평가중 하나라도 작으면 그놈은 제외하지, 근데 그게 원호야? 그럼 -1이야.
-        if(maxPeer > peer) {
-            if(score == wanho) {
-                return -1;
+    var answer = 0;
+    // 점수가 같으면 동석차
+    // 둘 다가 낮은 경우에는 인센티브 못 받음
+    // scores[0]은 완호의 점수 
+    const wanhoScore = scores[0];
+    const [attitude, peerReview] = wanhoScore;
+    // scores 길이가 10만이니, 10만의 제곱과 같은 건 안된다. 결국 한 번의 사이클에 끝내야 하는데, 어떻게 할까? 
+    // 그리디로 해야할 듯
+    for(let i =0  ; i<scores.length; i++) {
+        if(attitude < scores[i][0] && peerReview < scores[i][1]) {
+            return -1;
+        }else {
+           if(attitude + peerReview < scores[i][0] + scores[i][1]){
+               //여기서 분기를 하나 더 쳐서, 이 녀석이 낙제자가 아니면 되는 것
+               let isNotDropped = false;
+               for(let k = 0; k<scores.length; k++) {
+                if(scores[k][0] > scores[i][0] && scores[k][1] > scores[i][1]) {
+               isNotDropped = true;    
+                    }    
+               }
+               if(isNotDropped === false) {
+                answer++;   
+               }
+                
             }
-            continue;
         }
-        if(attitude+peer > wanhoScore) {
-            answer++;
-        }
-        maxPeer = Math.max(maxPeer,peer);
-        // console.log(`now: ${scores[i]}, answer: ${answer}`);
-
     }
-    
-    return answer;
+    return answer +1;
 }
