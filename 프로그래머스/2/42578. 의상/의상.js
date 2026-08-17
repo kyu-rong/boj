@@ -1,17 +1,24 @@
 function solution(clothes) {
-    var answer = 0;
+    var answer = 1;
     const closet = {};
-    clothes.forEach((value)=> {
-        const [wear, theme] = value;
-        if(closet[theme]) {
-            closet[theme].push(wear)
+    clothes.forEach(([cloth,theme])=> {
+        if(closet[theme] === undefined) {
+            closet[theme] = [cloth]
         }else {
-            closet[theme] = [wear];
+            closet[theme].push(cloth);
         }
     })
-    const closetValue = Object.values(closet);
-    answer = closetValue.reduce((acc,cur)=> {
-        return acc *= (cur.length + 1)
-    },1);
+    
+    // console.log(closet);
+    
+    const themes = Object.keys(closet);
+    const cloth = Object.values(closet);
+     
+    for(let i=0; i<themes.length; i++) {
+        const theme = themes[i];
+        answer *= (closet[theme].length+1);
+    }
+    
+    
     return answer-1;
 }
