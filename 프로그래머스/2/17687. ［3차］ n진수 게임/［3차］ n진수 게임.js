@@ -1,21 +1,13 @@
 function solution(n, t, m, p) {
     var answer = '';
-    //1. 일단 0부터 차례대로 모든 숫자를 n 진수로 바꾼다.
-    //2. 바꾼 숫자를 토대로 m 개씩 자른다.
-    //3. 잘린 m개중 p번째의 숫자를 붙인다. 
-    let array = [];
-    for(let i = 0; i<t * m; i++) {
-        const nNUm = i.toString(n).split('');
-        for(let j = 0; j<nNUm.length; j++) {
-            array.push(nNUm[j]);    
-        }
-        
+    // t개를 구하는데, n진법으로 m명이 돌아가며 말한다. 튜브의 순서는 p이다. 
+    let fullString = ""
+    for(let i=0; i<n * m * t -1; i++) {
+        fullString += i.toString(n);
     }
-    // console.log(array);
-    for(let i = 0; i<t; i++) {
-        const round = array.splice(0,m);
-        let word = round[p-1];
-        answer += word[0].toUpperCase();
+    // console.log(fullString);
+    for(let i=0; i<t; i++) {
+        answer += fullString[p+i*m-1].toUpperCase();
     }
     return answer;
 }
