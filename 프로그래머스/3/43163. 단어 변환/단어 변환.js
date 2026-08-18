@@ -1,39 +1,40 @@
 function solution(begin, target, words) {
-    var answer = 0;
-    const queue= [];
-    const visited = Array(words.length).fill(false);
-    function isWordDifferentByOne(wordA,wordB) {
-        let count = 0;
-        for(let i = 0 ; i<wordA.length; i++) {
-            if(wordA[i] !== wordB[i]){
-                count++;
-            }
+    var answer = Infinity;
+    
+    // 요건 dfs 문제다. words 의 수가 3개 이상 50개 이하라 사실 무관함.
+    // 각 단어의 길이도 짧다보니 순수 비교해도 됨. 
+    
+    const visited = new Array(words.length).fill(false);
+    
+    
+    //지금 단어 - currentWord, 
+    //
+    function dfs(currentWord, count) {
+        // console.log(`currentWord : ${currentWord}, count:${count}`)
+        if(currentWord === target) {
+            answer = Math.min(answer,count);
+            return;
         }
-        if(count > 1) {
-            return false;
-        }else if(count ==1) {
-            return true;
-        }
-    }
-    queue.push([begin,0]);
-    while(queue.length>0) {
-        const [word, count] = queue.shift()
-        if(count == words.length) {
-            return 0;
-        }
-        if(word == target){
-            return count;
-        }else {
-            for (let i = 0; i < words.length; i++) {
-                // 아직 방문하지 않았고, 한 글자 차이인지 확인
-                if (!visited[i] && isWordDifferentByOne(word, words[i])) {
-                    visited[i] = true; // 방문 처리
-                    queue.push([words[i], count + 1]); // 큐에 다음 단어와 1 증가한 단계를 넣음
-                }
-            }        
-        }
-
+        words.forEach((word,index)=> {
+           if(!visited[index] && compare(word,currentWord)){
+               visited[index] = true;
+               dfs(word,count+1);
+               visited[index] = false;
+           }
+        }) 
     }
     
+    function compare(a,b) {
+        if(a.length !== b.length) return false;
+        let count = 0;
+        for(let i = 0 ; i<a.length; i++) {
+            if(a[i] !== b[i]) count++;
+            if(count >1) return false;
+        }
+        return true;
+    }
+    
+    dfs(begin,0);
+    if(answer === Infinity) answer = 0;
     return answer;
 }
