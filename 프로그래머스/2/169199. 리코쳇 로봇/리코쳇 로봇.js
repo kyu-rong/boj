@@ -1,50 +1,47 @@
 function solution(board) {
-    var answer = -1;
-    const rPos = findChar(board,"R");
-    const gPos = findChar(board,"G");
+    function findChar(char) {
+        for(let i = 0 ; i <board.length; i++) {
+            for(let j= 0 ; j<board[0].length; j++) {
+                if(board[i][j] === char) {
+                    return [j,i];
+                }
+            }
+        } 
+    }
+    
+    // console.log(findChar("R"));
+    // console.log(findChar("G"));
+    
+    const queue = [[...findChar("R"),0]];
     const visited = Array.from({length: board.length}, ()=> Array(board[0].length).fill(false));
-    // console.log(rPos,gPos);
-    const dx = [-1,1,0,0];
-    const dy = [0,0,-1,1];
-    const queue = [];
-    queue.push([...rPos,0])
-    while(queue.length >0) {
+    while(queue.length>0) {
         const [x,y,count] = queue.shift();
-        if(x === gPos[0] && y === gPos[1]) {
-            return count;
-        }
+        visited[y][x] = true;
         
+        const dx = [-1,0,0,1];
+        const dy = [0,-1,1,0];
         
         for(let i = 0 ; i<4; i++) {
-            //한 방향으로 이동하되, D를 만나거나, 벽을 만날 때까지 이동    
-            let nx = dx[i] + x;
-            let ny = dy[i] + y;
-            while((nx >= 0 && nx <board[0].length) &&
-                 (ny >= 0 && ny <board.length) &&
-                 (board[ny][nx] !== "D")) {
-                nx += dx[i];
-                ny += dy[i];
-            }
-            nx -= dx[i];
-            ny -= dy[i];
-            if(!visited[ny][nx]) {
-                queue.push([nx,ny,count+1]);
-                visited[ny][nx] = true;
+            let nx = x;
+            let ny = y;
+            while(true) {
+                 nx += dx[i];
+                 ny += dy[i];    
+                 if(nx >= board[0].length || ny >= board.length || nx <0 || ny <0 || board[ny][nx] === "D") {
+                    if(!visited[ny-dy[i]][nx-dx[i]]) {
+                        if(board[ny-dy[i]][nx-dx[i]] === "G") {
+                            return count+1;
+                        }else {
+                            queue.push([nx-dx[i],ny-dy[i],count+1]);
+                        break;    
+                        }
+                    }else{
+                        break;
+                    }
             }
             
         }
-    }
-    
-    
-    return answer;
-}
-
-function findChar(board,char) {
-    for(let i = 0; i<board.length; i++) {
-        for(let j = 0; j<board[0].length; j++) {
-            if(char === board[i][j]) {
-                return [j,i];
-            }
         }
     }
+    return -1;
 }
