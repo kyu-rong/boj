@@ -1,35 +1,38 @@
 function solution(n, costs) {
     var answer = 0;
-    const visited = new Array(100).fill(false);
-    const bridge = {};
-    costs.forEach(([from,to,distance])=> {
-        if(bridge[from] === undefined) {
-            bridge[from] = [{to, distance}];
+    const map = {};
+    costs.forEach(([from,to,cost])=> {
+        if(map[from] ===undefined) {
+            map[from] = [[to,cost]];
         }else {
-            bridge[from].push({to, distance});
-            bridge[from].sort((a,b)=> a.distance - b.distance);
+            map[from].push([to,cost]);
         }
-        if(bridge[to] === undefined) {
-            bridge[to] = [{to :from,distance}]
+        if(map[to] === undefined) {
+            map[to] = [[from,cost]];
         }else {
-            bridge[to].push({to :from,distance});
-            bridge[to].sort((a,b)=> a.distance - b.distance);
+            map[to].push([from,cost]);
         }
     })
-    costs.sort((a,b)=> a[2] - b[2]);
-    const queue = bridge[costs[0][0]];
-    visited[costs[0][0]] = true;
+    // console.log(map);
+    costs.sort((a,b)=>a[2]- b[2]);
+    const visited = Array(n).fill(false);
+    const queue = [[0,0]];
+    let count = 0;
     while(queue.length>0) {
-        // console.log(queue);
-        const shifted = queue.shift();
-        if(!visited[shifted.to]) {
-            // console.log('----- ', shifted.to,'----')
-            answer += shifted.distance;
-            visited[shifted.to] = true;
-            queue.push(...bridge[shifted.to]);
-            queue.sort((a,b)=>a.distance-b.distance);
+        queue.sort((a,b)=>a[1]-b[1]);
+        // console.log(queue, answer);
+        const [from, cost] = queue.shift();
+        if(!visited[from]) {
+            answer += cost ;
+            count +=1;    
+            if(count === n) break;
+            visited[from] = true;
         }
+        map[from].forEach(([to,toCost])=> {
+            if(!visited[to]) {
+                queue.push([to,toCost]);
+            }
+        })
     }
-    // console.log(bridge);
     return answer;
 }
