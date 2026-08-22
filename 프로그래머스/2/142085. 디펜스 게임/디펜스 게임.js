@@ -1,85 +1,93 @@
-function solution(n, k, enemy) {
-    var answer = enemy.length;
-    const prq = new MinHeap(k);
-    console.log(prq);
-    for(let i = 0 ; i < enemy.length; i++) {
-        const value = enemy[i];
-        const index = i;
-        // console.log(`---------${index}-------`);
-        // console.log(prq);
-        if(prq.queue[0] < value) {
-            const lightEnemy = prq.shift();
-            prq.push(value);
-            n -= lightEnemy;
-        }else {
-            n -= value;
-        }
-        if(n < 0) {
-            answer = index
-            // console.log('리턴해!')
-            return answer;
-        }
-    }
-    return answer;
-}
-
-class MinHeap {
-    constructor(n) {
-        this.queue = Array(n).fill(0);
-    }
+function solution(n, k, enemies) {
+    var answer = 0;
     
-    push(value) {
-        this.queue.push(value);
-        this.bubbleUp();
-        // console.log(this.queue);
-    }
-    shift() {
-        if(this.queue.length ===0) return undefined;
-        if(this.queue.length ===1) return this.queue.pop();
+        class MinHeap {
+        constructor() {
+            this.heap = []
+            this.size = 0;
+        }
+        push(number) {
+            this.heap.push(number);
+            this.bubbleUp();
+            this.size++;
+            // console.log(this.heap, this.size);
+        }
         
-        const popped = this.queue[0];
-        this.queue[0] = this.queue.pop();
-        this.bubbleDown();
-        // console.log(this.queue);
-        return popped;
+        bubbleUp() {
+            let childIdx = this.size;
+            let parentIdx = Math.floor((childIdx-1)/2);
+            while(this.heap[childIdx] < this.heap[parentIdx]){
+                this.swap(childIdx,parentIdx);
+                childIdx = parentIdx;
+                parentIdx = Math.floor((childIdx-1)/2);
+            }            
+        }
+        
+        pop() {
+            const popped = this.heap[0];
+            // console.log(`popped: ${popped}`);
+            const last = this.heap[this.size-1];
+            // console.log(`last:${last}`);
+            this.heap[0] = last;
+            this.heap.pop();
+            this.bubbleDown();
+            this.size--;
+            return popped;
+        }
+        
+        bubbleDown() {
+            let parentIdx = 0;
+            let leftIdx = parentIdx * 2 +1;
+            let rightIdx = parentIdx * 2 +2;
+            
+            while(true) {
+                let swapIdx = null;
+                if(this.size >= leftIdx && this.heap[parentIdx] > this.heap[leftIdx]) {
+                    swapIdx = leftIdx;
+                }
+
+                if(this.size >= rightIdx && this.heap[parentIdx] > this.heap[rightIdx] && this.heap[leftIdx] > this.heap[rightIdx]) {
+                    swapIdx = rightIdx;
+                }
+
+                if(swapIdx !== null) {
+                    this.swap(parentIdx, swapIdx);
+                    parentIdx = swapIdx;
+                    leftIdx = parentIdx * 2 +1;
+                    rightIdx = parentIdx * 2 +2;    
+                }else {
+                    break;
+                }
+            } 
+        }
+        
+        
+        swap(a,b) {
+            [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]];
+        }
     }
-    swap(a,b) {
-        [this.queue[a], this.queue[b]] = [this.queue[b],this.queue[a]];
-    }
+
     
-    bubbleUp() {
-        let idx = this.queue.length-1;
-        let rootIdx = Math.floor((idx-1)/2);
-        while(this.queue[idx] < this.queue[rootIdx]) {
-            this.swap(idx,rootIdx);
-            idx = rootIdx
-            rootIdx = Math.floor((idx-1)/2);
+    
+    // 일단 무적권을 쓴다. (일단 queue에 넣는다.)
+    const minHeap = new MinHeap(k+1);
+    let currentCount = 0;
+    for(let i = 0 ; i<enemies.length; i++) {
+        const enemy = enemies[i];
+        // console.log(`-------enemy: ${enemy}-------`);
+        minHeap.push(enemy);
+        answer++;
+        // console.log(minHeap.heap);
+        if(minHeap.size > k) {
+            const shifted = minHeap.pop();
+            currentCount += shifted;
+            // console.log(`shifted: ${shifted}, currentCount :${currentCount} `)
+            
+            if(currentCount >n) {
+                return answer-1;
+            }
         }
     }
     
-    bubbleDown() {
-        const length = this.queue.length;
-        let idx = 0;
-        let leftIdx = idx * 2 +1;
-        let rightIdx = idx * 2 +2;
-        let swapIdx = null;
-        while(true) {
-            //왼쪽 요소가 살아있고, 
-            if(length >= leftIdx && this.queue[leftIdx] < this.queue[idx]) {
-                swapIdx = leftIdx;
-            }
-            if(length >= rightIdx && this.queue[leftIdx] > this.queue[rightIdx] && this.queue[rightIdx] < this.queue[idx]) {
-                swapIdx = rightIdx;
-            }
-            
-            if(swapIdx === null) break;
-            
-            this.swap(swapIdx,idx);
-            idx = swapIdx;
-            leftIdx = idx * 2 +1;
-            rightIdx = idx * 2 +2;
-            swapIdx = null;
-        }
-    }
-    
+    return answer;
 }
