@@ -1,60 +1,40 @@
 function solution(tickets) {
-    var answer = [];
-    const map = {};
-    
-    tickets.forEach(([from,to])=> {
-        if(map[from]===undefined) {
-            map[from] = [to]
-        }else {
-            map[from].push(to);
-            map[from].sort();
-        }
-    })
-    console.log(map);
-    
-    const arr = ["ICN"];
+    const graph = {};
+    tickets.forEach(([from, to]) => {
+        if (!graph[from]) graph[from] = [];
+        graph[from].push(to);
+    });
+    for (const from in graph) graph[from].sort();   // 정렬은 마지막에 한 번
 
-    function dfs(from,count) {
-        // console.log(`from:${from},count:${count},arr:${arr}`)
-        if(count === tickets.length) {
-            answer = [...arr];
-            return;
-        }
-        
-        if(!map[from]) return;
-        //만약에 티켓이 남아있는데, 갈 곳이 없으면 빠구
-        if(map[from].length === 0) return;
-        
-        const destinations = map[from];
-        
-        for(let i = 0 ; i<destinations.length; i++) {
-            
-            const destination = destinations.splice(i,1);
-            const to = destination[0];
-            arr.push(to);
-            
-            dfs(to, count+1);     
-            
-            if(answer.length>0) return;
-            
-            arr.pop();
-            
-            destinations.splice(i,0,to);
+    // 같은 구간 티켓이 여러 장일 수 있으니 인덱스별로 사용 여부를 관리
+    const used = {};
+    for (const from in graph) used[from] = Array(graph[from].length).fill(false);
+    console.log(used);
+    let result = null;
 
+    function dfs(path, from) {
+        if (path.length === tickets.length + 1) {
+            result = [...path];
+            return true;              // 첫 성공 = 사전순 최소 → 즉시 종료
         }
 
-        
+        const nexts = graph[from];
+        if (!nexts) return false;     // 막다른 공항 → 크래시 대신 실패 반환
+
+        for (let i = 0; i < nexts.length; i++) {   // if가 아니라 for
+            if (used[from][i]) continue;
+
+            used[from][i] = true;
+            path.push(nexts[i]);
+
+            if (dfs(path, nexts[i])) return true;
+
+            path.pop();               // 되돌리고
+            used[from][i] = false;    // 다음 후보 시도
+        }
+        return false;
     }
-    dfs("ICN",0);
-    
-    return answer;
+
+    dfs(["ICN"], "ICN");
+    return result;
 }
-
-// 항상 "ICN" 공항에서 출발
-
-// 주어진 항공권을 모두 이용해야한다.
-
-// 만일 가능한 경로가 2개 이상일 경우 알파벳 순서가 앞서는 경로를 return 합니다.
-
-// 모든 도시를 방문할 수 없는 경우는 주어지지 않습니다.
-
