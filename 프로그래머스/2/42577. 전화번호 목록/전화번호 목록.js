@@ -1,10 +1,14 @@
 function solution(phone_book) {
-    phone_book.sort();
-    for(let i = 0; i<phone_book.length-1; i++) {
-        const now = phone_book[i];
-        const next = phone_book[i+1];
-        if(next.startsWith(now)) {
-            return false;
+    const phone_set = new Set(phone_book);
+    // console.log(phone_set);
+    for(let j = 0 ; j<phone_book.length; j++) {
+        const phone = phone_book[j];
+        for(let i = 1; i<phone.length; i++) {
+            const sliced = phone.slice(0,i);
+            // console.log(sliced);
+            if(phone_set.has(sliced)) {
+                return false;   
+            }
         }
     }
     return true;
