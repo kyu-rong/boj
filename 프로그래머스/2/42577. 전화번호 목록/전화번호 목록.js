@@ -1,11 +1,11 @@
 function solution(phone_book) {
-    var answer = true;
     phone_book.sort();
-    console.log(phone_book);
-    for(let i = 1 ; i<phone_book.length; i++) {
-        if(phone_book[i].startsWith(phone_book[i-1])){
+    for(let i = 0; i<phone_book.length-1; i++) {
+        const now = phone_book[i];
+        const next = phone_book[i+1];
+        if(next.startsWith(now)) {
             return false;
         }
     }
-    return answer;
+    return true;
 }
