@@ -32,6 +32,6 @@ function solution(numbers) {
     }
     
     dfs("");
-    console.log(sosuSet);
+    // console.log(sosuSet);
     return sosuSet.size;
 }
