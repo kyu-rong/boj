@@ -1,21 +1,29 @@
 function solution(people, limit) {
-    var answer = 0;
-    let biggerPointer = 0;
-    let smallerPointer = people.length-1;
-    people.sort((a,b)=>b-a);
-    while(biggerPointer <= smallerPointer) {
-        //넘 뚱뚱해서 한 명밖에 못 탈 때,
-        if(people[biggerPointer] + people[smallerPointer] > limit) {
-            biggerPointer++;
-        }else {
-        //가벼워서 둘은 태울 수 있을 때,
-            biggerPointer++;
-            smallerPointer--;
+  
+    let count = 0;
+    const visited = Array(people.length).fill(false);
+    people.sort((a,b)=>a-b);
+    
+    // 50,000 이니까
+    let leftPtr = 0;
+    let rightPtr = people.length-1; 
+    
+    while(leftPtr <= rightPtr) {
+        // console.log(`leftPtr: ${leftPtr} , rightPtr: ${rightPtr}`);
+        if(leftPtr === rightPtr) {
+            count++;
+            break;
         }
-        answer++;
-
-        //가벼워서 둘은 탈 수 있을 때,
-        
+        if(people[leftPtr] + people[rightPtr] <= limit) {
+            count++;
+            leftPtr++;
+            rightPtr--;
+        }else {
+            rightPtr--;
+            count++;
+        }
     }
-    return answer;
+
+    return count;
+    
 }
