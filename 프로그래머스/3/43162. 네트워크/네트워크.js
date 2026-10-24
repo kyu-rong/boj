@@ -1,38 +1,35 @@
 function solution(n, computers) {
     var answer = 0;
-    const graph = {};
-    const visited = Array(n).fill(false);
-    computers.forEach((arr,index)=> {
-        for(let i=0; i<arr.length; i++) {
-            if(arr[i] ==1) {
-                if(graph[index] === undefined) {
-                    graph[index] = [i];    
-                }else {
-                    graph[index].push(i);
+    let networkGraph = {};
+    const visited = Array(n+1).fill(false);
+    computers.forEach((value,index)=> {
+        if(networkGraph[index+1] === undefined) {
+            networkGraph[index+1] = [];
+            value.forEach((node,nodeIndex) => {
+                if(node ===1) {
+                    networkGraph[index+1].push(nodeIndex+1);
                 }
-            }
-        }});
-    
-    // console.log(graph);
-    for(let i = 0 ; i<n; i++) {
-        if(!visited[i]) {
-            const queue = [i];
-            answer++;
-            while(queue.length >0) {
-                const shifted = queue.shift();
-                const toArr = graph[shifted];
-                for(let k=0; k<toArr.length; k++) {
-                    const to = toArr[k];
-                    if(!visited[to]) {
-                        visited[to] = true;
-                        queue.push(to);
-                    }
-                }
-            }
-
+            })
         }
+    })
+    for(let i = 1; i<=n; i++) {
+        if(visited[i] === false){
+            const queue = [i]; 
+            while(queue.length >0) {
+                const from = queue.shift();
+                networkGraph[from].forEach((to)=> {
+                if(visited[to] === false){
+                    visited[to] = true;
+                    queue.push(to);
+                }
+             })    
+                
+            }
+            answer++;
+        }
+        
     }
     
-    
+    console.log(networkGraph);
     return answer;
 }
