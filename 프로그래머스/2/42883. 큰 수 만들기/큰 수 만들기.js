@@ -1,27 +1,25 @@
 function solution(number, k) {
     var answer = '';
+    const numArr = number.split("").map(Number);
     const stack = [];
-    const numberArr = number.split("");
-    for(let i = 0 ; i<numberArr.length; i++) {
-        const number = numberArr[i];
-        //들어있는 게 있다면?
-        if(stack.length>0 && stack[stack.length-1] < number) {
-            // console.log('더 크긴해서 k: ', k);
-            while(stack[stack.length-1] < number && k>0) {
-                stack.pop();
-                k--;
-            } 
-            stack.push(number);
-            // console.log("뺴버리고 난 뒤 stack", stack);
-        }else {
-            stack.push(number);    
-            // console.log("그냥 채우고 난 뒤 stack", stack);
-        } 
-        // if(k ===0) break;
+    for(let i = 0; i< numArr.length; i++) {
+        
+        const current = numArr[i];
+        
+        while(stack.length > 0 && stack[stack.length-1] < current && k >0) {
+            stack.pop();
+            k--;
+        }
+        stack.push(numArr[i]);
+        // console.log(stack);
     }
-    while(k>0) {
+    
+    // 다 돌았는데 k가 남았다면 (내림차순 등) 뒤에서부터 제거
+    while (k > 0) {
         stack.pop();
         k--;
     }
-    return stack.join("");
+
+    answer = stack.join("");
+    return answer;
 }
