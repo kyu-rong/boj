@@ -1,18 +1,22 @@
 function solution(k, dungeons) {
-    const numDungeons = dungeons.length;
-    const visited = Array(numDungeons).fill(false);
-    let maxCount = 0;
-    function dfs(currentK, count) {
-        maxCount = Math.max(count, maxCount);
-        for(let i = 0 ; i <numDungeons; i++) {
-                if(visited[i] == false && currentK >= dungeons[i][0]) {
-                    visited[i] = true;
-                    dfs(currentK-dungeons[i][1], count+1);
-                    visited[i] = false;
-                }
-            }    
-    }
-    dfs(k,0)
+    var answer = -1;
+    const visited = Array(dungeons.length).fill(false);
     
-    return maxCount;
+    function dfs(count, k) {
+        answer = Math.max(count,answer);
+        for(let i =0; i<dungeons.length; i++){
+            if(visited[i] === false) {
+                const [minimum, usage] = dungeons[i];
+                if(k >= minimum) {
+                    visited[i] = true;
+                    dfs(count+1, k-usage);
+                    visited[i] = false;
+                }                    
+            }
+        }
+    }
+    dfs(0, k);
+    return answer;
 }
+
+// 경우의 수 8! 니까 다 돌아도 됨. 
