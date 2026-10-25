@@ -1,43 +1,47 @@
 function solution(n, edge) {
     var answer = 0;
-    const visited = Array(n+1).fill(false);
-    const map = {};
-    
-    edge.forEach(([from,to])=> {
-        if(map[from] === undefined) {
-            map[from] = [to];
-        }else{
-            map[from].push(to);
-        }
-        
-        if(map[to] === undefined) {
-            map[to] = [from];
+    const graph = {};
+
+    edge.forEach(([a,b])=> {
+        if(graph[a] === undefined) {
+            graph[a] = [b]
         }else {
-            map[to].push(from);
+            graph[a].push(b);    
+        }
+        if(graph[b] === undefined) {
+            graph[b] = [a]
+        }else {
+            graph[b].push(a);    
         }
     })
-    
-    // console.log(map);
+    // console.log(graph);
     const queue = [[1,0]];
-    const distanceArr = Array.from({length: (n+1)}, () => []);
-    let maxDistance = 0;
- 
-    while(queue.length>0) {
-        const [from,distance] = queue.shift();
-        
-        if(!visited[from]) {
-            visited[from]= true;
-            distanceArr[distance].push(from)
-            if(distance >= maxDistance) {
-                maxDistance = distance;
-                answer = distanceArr[distance].length;
+    let maxNum = 0;
+    let maxCount = 0;
+    let maxNumArr = [];
+    const visited = Array(n+1).fill(false);
+    visited[1] = true;
+    while(queue.length >0){
+        const [from,num] = queue.shift();
+        if(num > maxNum) {
+            maxCount = 1;
+            maxNumArr = [from];
+            maxNum = num;
+        }else if(num === maxNum) {
+            maxCount++;
+            maxNumArr.push(num);
+        }
+        // console.log('----------');
+        graph[from].forEach((to)=> {
+            // console.log(`to:${to}`)
+            if(visited[to] === false) {
+                queue.push([to,num+1]);
+                visited[to] = true;
             }
-            map[from].forEach((to) => {
-                if(!visited[to]){
-                    queue.push([to,distance+1])
-                }   
-            });
-        }   
+        })
+        // console.log(`maxNum: ${maxNum}, maxNumArr:${maxNumArr} , maxCount:${maxCount}`);  
     }
+    // console.log(maxNumArr);
+    answer = maxCount
     return answer;
 }
