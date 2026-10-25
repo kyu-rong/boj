@@ -1,25 +1,27 @@
 function solution(n, times) {
-    var answer = 0;
-    times.sort((a,b)=>a-b);
-    let maxValue = times[times.length-1] * n;
-    
+    const maxNum = Math.max(...times);
     let left = 0;
-    let right = maxValue;
+    let right = maxNum * n;
+    let mid = null;
     
-    while(left <= right) {
-        const mid = Math.floor((left+right)/2);
-        const value = times.reduce((acc,cur) => acc += Math.floor(mid / cur),0);
-        if(value > n) {
-            right = mid-1;
-        }else if(value === n) {
-            answer = mid;
-            right = mid-1;
-        }else{
-            left = mid +1;
+    while(left < right) {
+        
+        mid = Math.floor((left + right)/2);
+        console.log(`left: ${left} , right: ${right}, mid: ${mid}`);
+        let newN = n;
+        for(let i = 0 ; i<times.length; i++) {
+            const donePersonCount = Math.floor(mid /times[i]);
+            newN -= donePersonCount;
         }
-        console.log(mid);
+        console.log(`newN :${newN}`);
+        if(newN > 0) {
+            left = mid+1;
+            // 같거나 작으면 ()
+        }else {
+            right = mid;
+        }
     }
-
-    
     return left;
 }
+
+//1,000,000,000 이란 숫자를 보자마자 이분 탐색이구나 하면 될 듯
