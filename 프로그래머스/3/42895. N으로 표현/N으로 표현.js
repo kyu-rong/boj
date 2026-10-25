@@ -1,25 +1,24 @@
 function solution(N, number) {
     var answer = 0;
-    const dp = Array.from({length:9}, ()=> new Set());
-    for (let i = 1 ; i<9; i++) {
-        dp[i].add(Number(String(N).repeat(i)));
-        for (let j = 1; j<i; j++) {
-            for(const num1 of dp[i-j]){
-                for(const num2 of dp[j]) {
-                    dp[i].add(num1 +num2);
-                    dp[i].add(num1 -num2);
-                    dp[i].add(num1 *num2);
-                    if(num2 !== 0) {
-                        dp[i].add(Math.floor(num1 /num2));                        
-                    }
-                }
-            }
+    const dp = Array.from({length: 10}, ()=> new Set());
+    dp[1].add(N);
+    for(let i = 2; i<=9; i++) {
+        const repeated = Number(String(N).repeat(i));
+        
+        dp[i].add(repeated);
+        for(let j = 1; j<= i-1; j++) {
+            dp[i-j].forEach((value)=>dp[j].forEach((jValue)=> dp[i].add(value + jValue)));
+            dp[i-j].forEach((value)=>dp[j].forEach((jValue)=> dp[i].add(value - jValue)));
+            dp[i-j].forEach((value)=>dp[j].forEach((jValue)=> dp[i].add(value / jValue)));
+            dp[i-j].forEach((value)=>dp[j].forEach((jValue)=> dp[i].add(value * jValue)));
         }
-                    
-        if(dp[i].has(number)) {
-            return i;
-        }
+        
     }
     // console.log(dp);
+    
+    for(let i = 1; i<=8; i++) {
+        if(dp[i].has(number)) return i;
+    }
+    
     return -1;
 }
