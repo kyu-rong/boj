@@ -1,40 +1,29 @@
 function solution(N, road, K) {
     var answer = 0;
-    const dist = Array(N+1).fill(Infinity);
-    const map = {};
-    road.forEach(([from,to,dist])=> {
-        if(map[from] ==undefined) {
-            map[from] = [[to,dist]];
-        }else {
-            map[from].push([to,dist]);
-        }
-        if(map[to] ==undefined) {
-            map[to] = [[from,dist]];
-        }else {
-            map[to].push([from,dist]);
-        }
+    const graph = Array.from({length: N+1}, ()=> []);
+    const distArr = Array(N+1).fill(Infinity);
+    distArr[1] = 0;
+    road.forEach(([a,b,dist])=> {
+        graph[a].push({to:b, dist});
+        graph[b].push({to:a, dist});
     })
+    // console.log(graph);
+    // console.log(distArr);
     
-    
-    //최초에는 1로 가는데 0 만큼 쓰는 것으로 시작
-    const queue = [[1,0]];
-    dist[1] = 0;
-    
-    while(queue.length > 0) {
-        const [from, fromDist] = queue.shift();
-        map[from].forEach(([to,toDist])=> {
-            if(dist[to] > toDist + fromDist) {
-                queue.push([to,toDist + fromDist]);
-                dist[to] = toDist + fromDist;
+    const queue = [1];
+    let qi = 0;
+    while(qi < queue.length){
+        const from = queue[qi++];
+        // console.log(distArr);
+        graph[from].forEach((toNode)=> {
+            const {to: to, dist: toDist} = toNode;
+            if(distArr[to] > distArr[from] + toDist) {
+                distArr[to] = distArr[from] + toDist;
+                queue.push(to);
             }
         })
     }
-    // console.log(dist);
-    // console.log(map);
-    
-    answer =  dist.filter((value)=> value<=K).length;
-    
+    const filtered = distArr.filter((a)=>a<=K);
+    answer = filtered.length;
     return answer;
 }
-
-//각 도로를 건너는 데에 걸리는 시간은 도로별로 다르다는 것 -> 다익스트라 알고리즘
