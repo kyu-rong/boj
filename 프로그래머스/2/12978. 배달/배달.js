@@ -13,6 +13,7 @@ function solution(N, road, K) {
     const queue = [1];
     let qi = 0;
     while(qi < queue.length){
+        queue.sort((a,b)=>a[2]-b[2]);
         const from = queue[qi++];
         // console.log(distArr);
         graph[from].forEach((toNode)=> {
