@@ -11,10 +11,10 @@ function solution(N, road, K) {
     // console.log(distArr);
     
     const queue = [1];
-    let qi = 0;
-    while(qi < queue.length){
+
+    while(queue.length>0){
         queue.sort((a,b)=>a[2]-b[2]);
-        const from = queue[qi++];
+        const from = queue.shift();
         // console.log(distArr);
         graph[from].forEach((toNode)=> {
             const {to: to, dist: toDist} = toNode;
